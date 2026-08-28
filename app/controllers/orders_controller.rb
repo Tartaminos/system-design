@@ -50,6 +50,18 @@ class OrdersController < ApplicationController
   end
 
   def report
+    # Performance / design issues:
+
+    # - N+1 queries on user, order_items and product associations.
+
+    # - `limit` is client-controlled and has no upper bound, allowing excessively large reports.
+
+    # - Query filters by `id` but orders by `created_at`; review the execution plan and indexing strategy.
+
+    # - `from_id` is not consistent with the `created_at DESC` ordering if it is intended as a pagination cursor.
+
+    # - Ordering only by `created_at` is not deterministic when multiple records share the same timestamp.
+
     started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     orders = Order.where("orders.id >= ?", params.fetch(:from_id, 1))
                   .order(created_at: :desc)
