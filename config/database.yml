@@ -1,0 +1,65 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST", "/var/run/postgresql") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV["DB_USERNAME"] || ENV["USER"] || "postgres" %>
+  password: <%= ENV["DB_PASSWORD"] %>
+
+development:
+  primary:
+    <<: *default
+    url: <%= ENV["DB_PRIMARY_URL"] || ENV["DATABASE_URL"] %>
+    database: <%= ENV.fetch("DB_NAME", "system_design_development") %>
+  cache:
+    <<: *default
+    url: <%= ENV["DB_CACHE_URL"] %>
+    database: <%= ENV.fetch("DB_CACHE_NAME", "system_design_development_cache") %>
+  queue:
+    <<: *default
+    url: <%= ENV["DB_QUEUE_URL"] %>
+    database: <%= ENV.fetch("DB_QUEUE_NAME", "system_design_development_queue") %>
+  cable:
+    <<: *default
+    url: <%= ENV["DB_CABLE_URL"] %>
+    database: <%= ENV.fetch("DB_CABLE_NAME", "system_design_development_cable") %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  primary:
+    <<: *default
+    url: <%= ENV["DB_TEST_URL"] %>
+    database: <%= ENV.fetch("DB_TEST_NAME", "system_design_test") %>
+  cache:
+    <<: *default
+    url: <%= ENV["DB_TEST_CACHE_URL"] %>
+    database: <%= ENV.fetch("DB_TEST_CACHE_NAME", "system_design_test_cache") %>
+  queue:
+    <<: *default
+    url: <%= ENV["DB_TEST_QUEUE_URL"] %>
+    database: <%= ENV.fetch("DB_TEST_QUEUE_NAME", "system_design_test_queue") %>
+  cable:
+    <<: *default
+    url: <%= ENV["DB_TEST_CABLE_URL"] %>
+    database: <%= ENV.fetch("DB_TEST_CABLE_NAME", "system_design_test_cable") %>
+
+production:
+  primary:
+    <<: *default
+    url: <%= ENV["DB_PRIMARY_URL"] || ENV["DATABASE_URL"] %>
+    database: <%= ENV.fetch("DB_NAME", "system_design_production") %>
+  cache:
+    <<: *default
+    url: <%= ENV["DB_CACHE_URL"] %>
+    database: <%= ENV.fetch("DB_CACHE_NAME", "system_design_production_cache") %>
+  queue:
+    <<: *default
+    url: <%= ENV["DB_QUEUE_URL"] %>
+    database: <%= ENV.fetch("DB_QUEUE_NAME", "system_design_production_queue") %>
+  cable:
+    <<: *default
+    url: <%= ENV["DB_CABLE_URL"] %>
+    database: <%= ENV.fetch("DB_CABLE_NAME", "system_design_production_cable") %>
